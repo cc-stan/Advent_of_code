@@ -1,0 +1,303 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>day11</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-12-11"><meta name="DC.source" content="day11.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Main code</a></li><li><a href="#2">Part one</a></li><li><a href="#3">Part two</a></li><li><a href="#4">Answers</a></li><li><a href="#5">Functions</a></li></ul></div><h2 id="1">Main code</h2><pre class="codeinput"><span class="comment">% Load list</span>
+clear
+M=regexp(splitlines(regexprep(regexprep(fileread(<span class="string">'list.txt'</span>),<span class="string">'L'</span>,<span class="string">'0 '</span>),<span class="string">'[.]'</span>,<span class="string">'NaN '</span>)),<span class="string">' '</span>,<span class="string">'split'</span>);
+M=vertcat(M{:});
+M(:,end)=[];
+M=str2double(M);
+
+M_2=zeros(size(M)+2);
+M_2(2:end-1,2:end-1)=M;
+</pre><h2 id="2">Part one</h2><pre class="codeinput"><span class="comment">% Create a transformation matrix to transform the map (M) to a matrix where</span>
+<span class="comment">% each row contains the values of the neighbors</span>
+n=size(M);
+[I,J,dI,dJ]=ndgrid(1:n(1),1:n(2),-1:1,-1:1);
+I=reshape(I+dI,[],9); clear <span class="string">dI</span>
+J=reshape(J+dJ,[],9); clear <span class="string">dJ</span>
+valid=(I&gt;=1 &amp; I&lt;=n(1)) &amp;  (J&gt;=1 &amp; J&lt;=n(2));
+I(~valid)=nan;
+J(~valid)=nan;
+lookup=sub2ind([n(1),n(2)],I,J);
+lookup(~valid)=1;
+lookup(:,5)=[];
+valid(:,5)=[];
+mask=double(valid); mask(~valid)=nan;
+neighbors=M(lookup).*mask;
+
+<span class="comment">% Update the map till no changes happen anymore</span>
+check=false;
+check_new=0;
+<span class="keyword">while</span> check==false
+    check_prev=check_new;
+    M=newmap(M,lookup,mask);
+    check_new=nansum(M,<span class="string">'all'</span>);
+    check=check_new==check_prev;
+<span class="keyword">end</span>
+answer=check_new;
+</pre><h2 id="3">Part two</h2><pre class="codeinput">check=false;
+check_new=0;
+<span class="keyword">while</span> check==false
+    check_prev=check_new;
+    mask_next_occ=false(size(M)+2);
+    mask_next_emp=false(size(M)+2);
+    <span class="keyword">for</span> i=1:size(M,1)
+        <span class="keyword">for</span> j=1:size(M,2)
+            mask_next_occ(i+1,j+1)=(M_2(i+1,j+1)==0) &amp;&amp; (neighbors_total(M_2,i+1,j+1)==0);
+            mask_next_emp(i+1,j+1)=(M_2(i+1,j+1)==1) &amp;&amp; (neighbors_total(M_2,i+1,j+1)&gt;4);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    M_2(mask_next_occ)=1;
+    M_2(mask_next_emp)=0;
+    check_new=nansum(M_2,<span class="string">'all'</span>);
+    check=check_new==check_prev;
+<span class="keyword">end</span>
+answer(2)=check_new;
+</pre><h2 id="4">Answers</h2><pre class="codeinput">fprintf(<span class="string">'Answer to part one= %d\nAnswer to part two= %d\n'</span>,answer(1),answer(2))
+</pre><pre class="codeoutput">Answer to part one= 2249
+Answer to part two= 2023
+</pre><h2 id="5">Functions</h2><pre class="codeinput"><span class="comment">% function to update the map for part one</span>
+<span class="keyword">function</span> M=newmap(M,lookup,mask)
+    neighbors=reshape(nansum(M(lookup).*mask,2),[],94);
+    mask_next_occ=false(size(M));
+    mask_next_emp=false(size(M));
+    <span class="keyword">for</span> i=1:size(M,1)
+        <span class="keyword">for</span> j=1:size(M,2)
+            mask_next_occ(i,j)=(M(i,j)==0) &amp;&amp; (neighbors(i,j)==0);
+            mask_next_emp(i,j)=(M(i,j)==1) &amp;&amp; (neighbors(i,j)&gt;3);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    M(mask_next_occ)=1;
+    M(mask_next_emp)=0;
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> neighbors_2=neighbors_total(M,i,j)
+    neighbors_2=0;
+    <span class="keyword">for</span> k=1:8
+        <span class="keyword">switch</span> k
+            <span class="keyword">case</span> 1
+                neighbors_2=neighbor_los(M,i,j,0,1,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 2
+                neighbors_2=neighbor_los(M,i,j,1,1,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 3
+                neighbors_2=neighbor_los(M,i,j,1,0,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 4
+                neighbors_2=neighbor_los(M,i,j,1,-1,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 5
+                neighbors_2=neighbor_los(M,i,j,0,-1,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 6
+                neighbors_2=neighbor_los(M,i,j,-1,-1,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 7
+                neighbors_2=neighbor_los(M,i,j,-1,0,0,0,false,neighbors_2);
+            <span class="keyword">case</span> 8
+                neighbors_2=neighbor_los(M,i,j,-1,1,0,0,false,neighbors_2);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> neighbors=neighbor_los(M,i,j,x,y,x_temp,y_temp,check,neighbors)
+    <span class="keyword">while</span> check==false
+        x_temp=x_temp+x;
+        y_temp=y_temp+y;
+        <span class="keyword">if</span> M(i+x_temp,j+y_temp)==0
+            check=true;
+        <span class="keyword">elseif</span> M(i+x_temp,j+y_temp)==1
+            check=true;
+            neighbors=neighbors+1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Main code
+
+% Load list
+clear
+M=regexp(splitlines(regexprep(regexprep(fileread('list.txt'),'L','0 '),'[.]','NaN ')),' ','split');
+M=vertcat(M{:});
+M(:,end)=[];
+M=str2double(M);
+
+M_2=zeros(size(M)+2);
+M_2(2:end-1,2:end-1)=M;
+
+%% Part one
+
+% Create a transformation matrix to transform the map (M) to a matrix where
+% each row contains the values of the neighbors
+n=size(M);
+[I,J,dI,dJ]=ndgrid(1:n(1),1:n(2),-1:1,-1:1);
+I=reshape(I+dI,[],9); clear dI
+J=reshape(J+dJ,[],9); clear dJ
+valid=(I>=1 & I<=n(1)) &  (J>=1 & J<=n(2));
+I(~valid)=nan;
+J(~valid)=nan;
+lookup=sub2ind([n(1),n(2)],I,J);
+lookup(~valid)=1;
+lookup(:,5)=[];
+valid(:,5)=[];
+mask=double(valid); mask(~valid)=nan;
+neighbors=M(lookup).*mask;
+
+% Update the map till no changes happen anymore
+check=false;
+check_new=0;
+while check==false
+    check_prev=check_new;
+    M=newmap(M,lookup,mask);
+    check_new=nansum(M,'all');
+    check=check_new==check_prev;
+end
+answer=check_new;
+
+%% Part two
+
+check=false;
+check_new=0;
+while check==false
+    check_prev=check_new;
+    mask_next_occ=false(size(M)+2);
+    mask_next_emp=false(size(M)+2);
+    for i=1:size(M,1)
+        for j=1:size(M,2)
+            mask_next_occ(i+1,j+1)=(M_2(i+1,j+1)==0) && (neighbors_total(M_2,i+1,j+1)==0);
+            mask_next_emp(i+1,j+1)=(M_2(i+1,j+1)==1) && (neighbors_total(M_2,i+1,j+1)>4);
+        end
+    end
+    M_2(mask_next_occ)=1;
+    M_2(mask_next_emp)=0;
+    check_new=nansum(M_2,'all');
+    check=check_new==check_prev;
+end
+answer(2)=check_new;
+
+%% Answers
+
+fprintf('Answer to part one= %d\nAnswer to part two= %d\n',answer(1),answer(2))
+
+%% Functions
+
+% function to update the map for part one
+function M=newmap(M,lookup,mask)
+    neighbors=reshape(nansum(M(lookup).*mask,2),[],94);
+    mask_next_occ=false(size(M));
+    mask_next_emp=false(size(M));
+    for i=1:size(M,1)
+        for j=1:size(M,2)
+            mask_next_occ(i,j)=(M(i,j)==0) && (neighbors(i,j)==0);
+            mask_next_emp(i,j)=(M(i,j)==1) && (neighbors(i,j)>3);
+        end
+    end
+    M(mask_next_occ)=1;
+    M(mask_next_emp)=0;
+end
+
+
+function neighbors_2=neighbors_total(M,i,j)
+    neighbors_2=0;
+    for k=1:8
+        switch k
+            case 1
+                neighbors_2=neighbor_los(M,i,j,0,1,0,0,false,neighbors_2);
+            case 2
+                neighbors_2=neighbor_los(M,i,j,1,1,0,0,false,neighbors_2);
+            case 3
+                neighbors_2=neighbor_los(M,i,j,1,0,0,0,false,neighbors_2);
+            case 4
+                neighbors_2=neighbor_los(M,i,j,1,-1,0,0,false,neighbors_2);
+            case 5
+                neighbors_2=neighbor_los(M,i,j,0,-1,0,0,false,neighbors_2);
+            case 6
+                neighbors_2=neighbor_los(M,i,j,-1,-1,0,0,false,neighbors_2);
+            case 7
+                neighbors_2=neighbor_los(M,i,j,-1,0,0,0,false,neighbors_2);
+            case 8
+                neighbors_2=neighbor_los(M,i,j,-1,1,0,0,false,neighbors_2);
+        end
+    end
+end
+
+function neighbors=neighbor_los(M,i,j,x,y,x_temp,y_temp,check,neighbors)
+    while check==false
+        x_temp=x_temp+x;
+        y_temp=y_temp+y;
+        if M(i+x_temp,j+y_temp)==0
+            check=true;
+        elseif M(i+x_temp,j+y_temp)==1
+            check=true;
+            neighbors=neighbors+1;
+        end
+    end
+end
+
+
+##### SOURCE END #####
+--></body></html>

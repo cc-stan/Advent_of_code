@@ -1,0 +1,242 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>day4</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-12-04"><meta name="DC.source" content="day4.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">load list</a></li><li><a href="#2">part one</a></li><li><a href="#3">part 2</a></li><li><a href="#4">answers</a></li></ul></div><h2 id="1">load list</h2><pre class="codeinput">clear
+
+str=fileread(<span class="string">'list.txt'</span>);
+str=[str,<span class="string">' '</span>];
+str=regexprep(str,<span class="string">'\s[^a-z]'</span>,<span class="string">' '</span>);
+str=regexprep(str,<span class="string">'  '</span>,<span class="string">' \n'</span>);
+ids=splitlines(str);
+
+check={<span class="string">'byr:'</span>,<span class="string">'iyr:'</span>,<span class="string">'eyr:'</span>,<span class="string">'hgt:'</span>,<span class="string">'hcl:'</span>,<span class="string">'ecl:'</span>,<span class="string">'pid:'</span>};
+
+valid=zeros(1,length(ids));
+temp=0;
+</pre><h2 id="2">part one</h2><pre class="codeinput"><span class="keyword">for</span> i=1:length(ids)
+    <span class="keyword">for</span> j=1:length(check)
+        <span class="keyword">if</span> contains(ids{i},check{j})
+            temp=temp+1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> sum(temp)==length(check)
+        valid(i)=1;
+    <span class="keyword">end</span>
+    temp=0;
+<span class="keyword">end</span>
+
+ids_v=ids(valid==1);
+</pre><h2 id="3">part 2</h2><pre class="codeinput">data=cell(length(ids_v),length(check));
+valid2=zeros(length(ids_v),length(check));
+
+<span class="keyword">for</span> i=1:length(ids_v)
+    <span class="keyword">for</span> j=1:length(check)
+        data{i,j}=extractBetween(ids_v{i},check{j},<span class="string">' '</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:length(ids_v)
+    temp=str2double(data{i,1});
+    <span class="keyword">if</span> (temp&gt;=1920) &amp;&amp; (temp&lt;=2002)
+        valid2(i,1)=1;
+    <span class="keyword">end</span>
+
+    temp=str2double(data{i,2});
+    <span class="keyword">if</span> (temp&gt;=2010) &amp;&amp; (temp&lt;=2020)
+        valid2(i,2)=1;
+    <span class="keyword">end</span>
+
+    temp=str2double(data{i,3});
+    <span class="keyword">if</span> (temp&gt;=2020) &amp;&amp; (temp&lt;=2030)
+        valid2(i,3)=1;
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> contains(data{i,4}{1},<span class="string">'cm'</span>)
+        temp=str2double(extractBetween(data{i,4}{1},1,<span class="string">'cm'</span>));
+        <span class="keyword">if</span> (temp&gt;=150) &amp;&amp; (temp&lt;=193)
+            valid2(i,4)=1;
+        <span class="keyword">end</span>
+    <span class="keyword">elseif</span> contains(data{i,4}{1},<span class="string">'in'</span>)
+        temp=str2double(extractBetween(data{i,4}{1},1,<span class="string">'in'</span>));
+        <span class="keyword">if</span> (temp&gt;=59) &amp;&amp; (temp&lt;=76)
+            valid2(i,4)=1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> (data{i,5}{1}(1)==<span class="string">'#'</span>) &amp;&amp; (length(data{i,5}{1})==7) &amp;&amp; (length(regexprep(data{i,5}{1},<span class="string">'[a-f0-9]'</span>,<span class="string">''</span>))== 1)
+        valid2(i,5)=1;
+    <span class="keyword">end</span>
+
+    eye_check={<span class="string">'amb'</span>,<span class="string">'blu'</span>,<span class="string">'brn'</span>, <span class="string">'gry'</span>, <span class="string">'grn'</span>, <span class="string">'hzl'</span>, <span class="string">'oth'</span>};
+
+    <span class="keyword">if</span> (length(data{i,6}{1})==3) &amp;&amp; (contains(data{i,6}{1},eye_check))
+        valid2(i,6)=1;
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> (length(data{i,7}{1})==9) &amp;&amp; isempty(regexprep(data{i,7}{1},<span class="string">'[0-9]'</span>,<span class="string">''</span>))
+        valid2(i,7)=1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="4">answers</h2><pre class="codeinput">disp([<span class="string">'Part 1 = '</span>, num2str(sum(valid))])
+disp([<span class="string">'Part 2 = '</span>, num2str(sum(sum(valid2,2)==7))])
+</pre><pre class="codeoutput">Part 1 = 213
+Part 2 = 147
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% load list 
+clear 
+
+str=fileread('list.txt');
+str=[str,' '];
+str=regexprep(str,'\s[^a-z]',' ');
+str=regexprep(str,'  ',' \n');
+ids=splitlines(str);
+
+check={'byr:','iyr:','eyr:','hgt:','hcl:','ecl:','pid:'};
+
+valid=zeros(1,length(ids));
+temp=0;
+
+%% part one
+
+for i=1:length(ids)
+    for j=1:length(check)
+        if contains(ids{i},check{j})
+            temp=temp+1;
+        end
+    end
+    if sum(temp)==length(check)
+        valid(i)=1;
+    end
+    temp=0;
+end
+
+ids_v=ids(valid==1);
+
+%% part 2
+
+data=cell(length(ids_v),length(check));
+valid2=zeros(length(ids_v),length(check));
+
+for i=1:length(ids_v)
+    for j=1:length(check)
+        data{i,j}=extractBetween(ids_v{i},check{j},' ');
+    end
+end
+
+for i=1:length(ids_v)
+    temp=str2double(data{i,1});
+    if (temp>=1920) && (temp<=2002)
+        valid2(i,1)=1;
+    end
+    
+    temp=str2double(data{i,2});
+    if (temp>=2010) && (temp<=2020)
+        valid2(i,2)=1;
+    end
+   
+    temp=str2double(data{i,3});
+    if (temp>=2020) && (temp<=2030)
+        valid2(i,3)=1;
+    end
+
+    if contains(data{i,4}{1},'cm')
+        temp=str2double(extractBetween(data{i,4}{1},1,'cm'));
+        if (temp>=150) && (temp<=193)
+            valid2(i,4)=1;
+        end
+    elseif contains(data{i,4}{1},'in')
+        temp=str2double(extractBetween(data{i,4}{1},1,'in'));
+        if (temp>=59) && (temp<=76)
+            valid2(i,4)=1;
+        end
+    end
+    
+    if (data{i,5}{1}(1)=='#') && (length(data{i,5}{1})==7) && (length(regexprep(data{i,5}{1},'[a-f0-9]',''))== 1)
+        valid2(i,5)=1;
+    end
+    
+    eye_check={'amb','blu','brn', 'gry', 'grn', 'hzl', 'oth'};
+    
+    if (length(data{i,6}{1})==3) && (contains(data{i,6}{1},eye_check))
+        valid2(i,6)=1;
+    end
+    
+    if (length(data{i,7}{1})==9) && isempty(regexprep(data{i,7}{1},'[0-9]',''))
+        valid2(i,7)=1;
+    end
+end
+
+%% answers
+
+disp(['Part 1 = ', num2str(sum(valid))])
+disp(['Part 2 = ', num2str(sum(sum(valid2,2)==7))])
+
+##### SOURCE END #####
+--></body></html>
