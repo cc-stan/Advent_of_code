@@ -1,0 +1,55 @@
+clear
+input1=splitlines(regexprep(fileread('input.txt'),' ',''));
+input1=input;
+
+for i=1:length(input1)
+    while ~isempty(regexp(input1{i},'[()]','once'))
+        [math_temp,ims,ime]=regexp(input1{i},'[(][0-9*+]+[)]','match');
+        for j=flip(1:length(math_temp))
+            while ~isempty(regexprep(math_temp{j},'[0-9()]',''))
+                [sum_temp,is,ie]=regexp(math_temp{j},'\d+[+*]\d+','match','once');
+                math_temp{j}=replaceBetween(math_temp{j},is,ie,num2str(eval(sum_temp)));
+            end
+            math_temp(j)={regexprep(math_temp{j},'[()]','')};
+            input1{i}=replaceBetween(input1{i},ims(j),ime(j),math_temp{j});
+        end
+    end
+end
+
+for i=1:length(input1)
+    while ~isempty(regexprep(input1{i},'[0-9]',''))
+        [sum_temp,is,ie]=regexp(input1{i},'\d+[+*]\d+','match','once');
+        input1{i}=replaceBetween(input1{i},is,ie,num2str(eval(sum_temp)));
+    end
+end
+
+answer=sum(str2double(input1),'all');
+
+for i=1:length(input)
+    while ~isempty(regexp(input{i},'[()]','once'))
+        [math_temp,ims,ime]=regexp(input{i},'[(][0-9*+]+[)]','match');
+        for j=flip(1:length(math_temp))
+            while ~isempty(regexprep(math_temp{j},'[0-9()*]',''))
+                [sum_temp,is,ie]=regexp(math_temp{j},'\d+[+]\d+','match','once');
+                math_temp{j}=replaceBetween(math_temp{j},is,ie,num2str(eval(sum_temp)));
+            end
+            while ~isempty(regexprep(math_temp{j},'[0-9()]',''))
+                [sum_temp,is,ie]=regexp(math_temp{j},'\d+[*]\d+','match','once');
+                math_temp{j}=replaceBetween(math_temp{j},is,ie,num2str(eval(sum_temp)));
+            end
+            math_temp(j)={regexprep(math_temp{j},'[()]','')};
+            input{i}=replaceBetween(input{i},ims(j),ime(j),math_temp{j});
+        end
+    end
+end
+
+for i=1:length(input)
+    while ~isempty(regexprep(input{i},'[0-9*]',''))
+        [sum_temp,is,ie]=regexp(input{i},'\d+[+]\d+','match','once');
+        input{i}=replaceBetween(input{i},is,ie,num2str(eval(sum_temp)));
+    end
+    while ~isempty(regexprep(input{i},'[0-9]',''))
+        [sum_temp,is,ie]=regexp(input{i},'\d+[*]\d+','match','once');
+        input{i}=replaceBetween(input{i},is,ie,num2str(eval(sum_temp)));
+    end
+end
