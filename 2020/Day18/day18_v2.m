@@ -1,9 +1,8 @@
 clear
-input1=splitlines(regexprep(regexprep(regexprep(fileread('input.txt'),' ',''),'+','/'),'*','\'));
-input2=splitlines(regexprep(regexprep(regexprep(fileread('input.txt'),' ',''),'+','/'),'*','-'));
+input1=splitlines(regexprep(fileread('input.txt'),{' ','+','*'},{'','/','\'}));
+input2=splitlines(regexprep(fileread('input.txt'),{' ','+','*'},{'','/','-'}));
 
-answer=sum(cellfun(@eval,input1),'all');
-answer(2)=sum(cellfun(@eval,input2),'all');
+answer=[sum(cellfun(@eval,input1),'all'),sum(cellfun(@eval,input2),'all')];
 fprintf('Answer to part one= %d\nAnswer to part two= %d\n',answer(1),answer(2))
 
 function c=mrdivide(a,b)

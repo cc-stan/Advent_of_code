@@ -68,11 +68,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
   </style></head><body><div class="content"><pre class="codeinput">clear
-input1=splitlines(regexprep(regexprep(regexprep(fileread(<span class="string">'input.txt'</span>),<span class="string">' '</span>,<span class="string">''</span>),<span class="string">'+'</span>,<span class="string">'/'</span>),<span class="string">'*'</span>,<span class="string">'\'</span>));
-input2=splitlines(regexprep(regexprep(regexprep(fileread(<span class="string">'input.txt'</span>),<span class="string">' '</span>,<span class="string">''</span>),<span class="string">'+'</span>,<span class="string">'/'</span>),<span class="string">'*'</span>,<span class="string">'-'</span>));
+input1=splitlines(regexprep(fileread(<span class="string">'input.txt'</span>),{<span class="string">' '</span>,<span class="string">'+'</span>,<span class="string">'*'</span>},{<span class="string">''</span>,<span class="string">'/'</span>,<span class="string">'\'</span>}));
+input2=splitlines(regexprep(fileread(<span class="string">'input.txt'</span>),{<span class="string">' '</span>,<span class="string">'+'</span>,<span class="string">'*'</span>},{<span class="string">''</span>,<span class="string">'/'</span>,<span class="string">'-'</span>}));
 
-answer=sum(cellfun(@eval,input1),<span class="string">'all'</span>);
-answer(2)=sum(cellfun(@eval,input2),<span class="string">'all'</span>);
+answer=[sum(cellfun(@eval,input1),<span class="string">'all'</span>),sum(cellfun(@eval,input2),<span class="string">'all'</span>)];
 fprintf(<span class="string">'Answer to part one= %d\nAnswer to part two= %d\n'</span>,answer(1),answer(2))
 
 <span class="keyword">function</span> c=mrdivide(a,b)
@@ -89,11 +88,10 @@ Answer to part two= 34646237037193
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 clear
-input1=splitlines(regexprep(regexprep(regexprep(fileread('input.txt'),' ',''),'+','/'),'*','\'));
-input2=splitlines(regexprep(regexprep(regexprep(fileread('input.txt'),' ',''),'+','/'),'*','-'));
+input1=splitlines(regexprep(fileread('input.txt'),{' ','+','*'},{'','/','\'}));
+input2=splitlines(regexprep(fileread('input.txt'),{' ','+','*'},{'','/','-'}));
 
-answer=sum(cellfun(@eval,input1),'all');
-answer(2)=sum(cellfun(@eval,input2),'all');
+answer=[sum(cellfun(@eval,input1),'all'),sum(cellfun(@eval,input2),'all')];
 fprintf('Answer to part one= %d\nAnswer to part two= %d\n',answer(1),answer(2))
 
 function c=mrdivide(a,b)
