@@ -1,0 +1,206 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>day19</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-12-19"><meta name="DC.source" content="day19.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Main code</a></li><li><a href="#2">Functions</a></li></ul></div><h2 id="1">Main code</h2><pre class="codeinput"><span class="comment">% Parsing</span>
+clear
+input=fileread(<span class="string">'input.txt'</span>);
+rules=regexp(input,<span class="string">'(?&lt;num&gt;\d+(?=\:)):(?&lt;act&gt;[" ab0-9|]+(?=\s))'</span>,<span class="string">'names'</span>);
+mes=regexp(input,<span class="string">'[ab][ab]+'</span>,<span class="string">'match'</span>)';
+
+<span class="comment">% Sort the rules</span>
+rulest=struct2table(rules);
+rulest.num=str2double(rulest.num);
+rulest=sortrows(rulest);
+rulest.num=num2str(rulest.num);
+rules=table2struct(rulest);
+
+<span class="comment">% Part one</span>
+trans=string(0:length(rules)-1)';
+trans(contains({rules.act},<span class="string">'a'</span>))=<span class="string">'"a"'</span>;
+trans(contains({rules.act},<span class="string">'b'</span>))=<span class="string">'"b"'</span>;
+
+<span class="keyword">while</span>  ~(regexprep(trans(1),<span class="string">'\D'</span>,<span class="string">''</span>)==<span class="string">""</span>)
+    <span class="keyword">for</span> i=1:length(rules)
+        [temp,is,ie]=regexp(rules(i).act,<span class="string">'\d+'</span>,<span class="string">'match'</span>);
+        <span class="keyword">for</span> j=flip(1:length(temp))
+            <span class="keyword">if</span> regexprep(trans(eval(temp{j})+1),<span class="string">'\D'</span>,<span class="string">''</span>)==<span class="string">""</span>
+                rules(i).act=replaceBetween(rules(i).act,is(j),ie(j),<span class="string">'+('</span>+trans(eval(temp{j})+1)+<span class="string">')'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    ind=logical(cellfun(@isempty,regexprep({rules.act},<span class="string">'\D'</span>,<span class="string">''</span>))-cellfun(@isempty,cellfun(@str2num,trans,<span class="string">'UniformOutput'</span>,false))');
+    trans(ind)={rules(ind).act};
+<span class="keyword">end</span>
+
+rule0=trans_rule(rules(1));
+answer=sum(matches(mes,rule0));
+
+<span class="comment">%Part two</span>
+rule42=trans_rule(rules(43));
+rule31=trans_rule(rules(32));
+
+check=false(length(mes),1);
+[rulex,ruley_1,ruley_2]=deal(string());
+[xm,ym]=deal(5);
+<span class="keyword">for</span> x=1:xm
+    rulex=rulex+rule42;                 <span class="comment">% rule8=' 42 | 42 8';</span>
+    <span class="keyword">for</span> y=1:ym
+        ruley_1=ruley_1+rule42;         <span class="comment">% rule11=' 42 31 | 42 11 31';</span>
+        ruley_2=ruley_2+rule31;
+        rule0_2=rulex+ruley_1+ruley_2;  <span class="comment">% rule0=x*rule42+y*rule42+y*rule31</span>
+
+        check(~check)=matches(mes(~check),rule0_2);
+    <span class="keyword">end</span>
+    [ruley_1,ruley_2]=deal(string());
+<span class="keyword">end</span>
+answer(2)=sum(check);
+
+<span class="comment">% Answers</span>
+fprintf(<span class="string">'Answer to part one= %d\nAnswer to part two= %d\n'</span>,answer(1),answer(2))
+</pre><h2 id="2">Functions</h2><pre class="codeinput"><span class="comment">% Function to translate a string in the rules set to a proper pattern.</span>
+<span class="keyword">function</span> rule=trans_rule(rule)
+    rule=regexprep(rule.act,{<span class="string">' '</span>,<span class="string">'[(]["]a["][)]'</span>,<span class="string">'[(]"b"[)]'</span>},{<span class="string">''</span>,<span class="string">'"a"'</span>,<span class="string">'"b"'</span>});
+    rule=regexprep(rule,{<span class="string">'"[+]"'</span>,<span class="string">'[)][+][(]'</span>,<span class="string">'"[+][(]'</span>,<span class="string">'[)][+]"'</span>},{<span class="string">''</span>,<span class="string">')-('</span>,<span class="string">'"-('</span>,<span class="string">')-"'</span>});
+    rule=regexprep(rule,{<span class="string">'[+]'</span>,<span class="string">'-'</span>},{<span class="string">''</span>,<span class="string">'+'</span>});
+    rule=eval(rule);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Answer to part one= 162
+Answer to part two= 267
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Main code
+
+% Parsing
+clear
+input=fileread('input.txt');
+rules=regexp(input,'(?<num>\d+(?=\:)):(?<act>[" ab0-9|]+(?=\s))','names');
+mes=regexp(input,'[ab][ab]+','match')';
+
+% Sort the rules
+rulest=struct2table(rules);
+rulest.num=str2double(rulest.num);
+rulest=sortrows(rulest);
+rulest.num=num2str(rulest.num);
+rules=table2struct(rulest);
+
+% Part one
+trans=string(0:length(rules)-1)';
+trans(contains({rules.act},'a'))='"a"';
+trans(contains({rules.act},'b'))='"b"';
+
+while  ~(regexprep(trans(1),'\D','')=="")
+    for i=1:length(rules)
+        [temp,is,ie]=regexp(rules(i).act,'\d+','match');
+        for j=flip(1:length(temp))
+            if regexprep(trans(eval(temp{j})+1),'\D','')==""
+                rules(i).act=replaceBetween(rules(i).act,is(j),ie(j),'+('+trans(eval(temp{j})+1)+')');
+            end
+        end        
+    end
+    ind=logical(cellfun(@isempty,regexprep({rules.act},'\D',''))-cellfun(@isempty,cellfun(@str2num,trans,'UniformOutput',false))');
+    trans(ind)={rules(ind).act};
+end
+
+rule0=trans_rule(rules(1));
+answer=sum(matches(mes,rule0));
+
+%Part two
+rule42=trans_rule(rules(43));
+rule31=trans_rule(rules(32));
+
+check=false(length(mes),1);
+[rulex,ruley_1,ruley_2]=deal(string());
+[xm,ym]=deal(5);
+for x=1:xm
+    rulex=rulex+rule42;                 % rule8=' 42 | 42 8';
+    for y=1:ym
+        ruley_1=ruley_1+rule42;         % rule11=' 42 31 | 42 11 31';
+        ruley_2=ruley_2+rule31;
+        rule0_2=rulex+ruley_1+ruley_2;  % rule0=x*rule42+y*rule42+y*rule31
+        
+        check(~check)=matches(mes(~check),rule0_2);
+    end
+    [ruley_1,ruley_2]=deal(string());
+end
+answer(2)=sum(check);
+
+% Answers
+fprintf('Answer to part one= %d\nAnswer to part two= %d\n',answer(1),answer(2))
+
+%% Functions
+
+% Function to translate a string in the rules set to a proper pattern.
+function rule=trans_rule(rule)
+    rule=regexprep(rule.act,{' ','[(]["]a["][)]','[(]"b"[)]'},{'','"a"','"b"'});
+    rule=regexprep(rule,{'"[+]"','[)][+][(]','"[+][(]','[)][+]"'},{'',')-(','"-(',')-"'});
+    rule=regexprep(rule,{'[+]','-'},{'','+'});
+    rule=eval(rule);
+end
+##### SOURCE END #####
+--></body></html>
