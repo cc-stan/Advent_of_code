@@ -1,0 +1,202 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>day21</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-12-22"><meta name="DC.source" content="day21.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clear
+input=fileread(<span class="string">'input.txt'</span>);
+input=splitlines(input);
+algs=regexp(input,<span class="string">'(?&lt;=contains )[a-z]+|(?&lt;=, )[a-z]+'</span>,<span class="string">'match'</span>);
+ing=regexp(input,<span class="string">'\&lt;(?!contains\&gt;)[a-z]+ '</span>,<span class="string">'match'</span>);
+all_ing=unique([ing{:}]);
+all_algs=unique([algs{:}]);
+
+al.algs=all_algs;
+al.pos=cell(size(al.algs));
+
+<span class="keyword">for</span> i=1:length(ing)
+    <span class="keyword">for</span> j=1:length(algs{i})
+        ind=ismember(al.algs,algs{i}{j});
+        <span class="keyword">if</span> isempty(al.pos{ind})
+            al.pos(ind)=ing(i);
+        <span class="keyword">else</span>
+            al.pos{ind}=al.pos{ind}(ismember(al.pos{ind},ing{i}));
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+wrong=all_ing(~ismember(all_ing,unique([al.pos{:}])));
+answer=sum(ismember([ing{:}],wrong));
+
+<span class="keyword">for</span> i=1:length(ing)
+    ing{i}=ing{i}(~cellfun(@isempty,regexprep(ing{i},wrong,<span class="string">''</span>)));
+<span class="keyword">end</span>
+
+part2.ing=unique([ing{:}]);
+part2.count=cell(1,8);
+part2.count(:)={zeros(1,8)};
+
+<span class="keyword">for</span> i=1:length(ing)
+    <span class="keyword">for</span> j=1:length(algs{i})
+        ind=ismember(al.algs,algs{i}{j});
+        <span class="keyword">for</span> k=find(ismember(part2.ing,ing{i}))
+           part2.count{k}(ind)= part2.count{k}(ind)+1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+total=zeros(1,length(al.algs));
+<span class="keyword">for</span> i=1:length(al.algs)
+    total(i)=sum(ismember([algs{:}],all_algs{i}));
+<span class="keyword">end</span>
+check=false(length(al.algs));
+<span class="keyword">for</span> i=1:length(al.algs)
+    check(i,:)=part2.count{i}==total;
+<span class="keyword">end</span>
+
+check_temp=cell(length(al.algs),1);
+i=0;
+<span class="keyword">while</span> sum(check,<span class="string">'all'</span>)&gt;0
+    i=mod(i,8)+1;
+    <span class="keyword">if</span> sum(check(:,i))==1
+        check_temp{i}=part2.ing(check(:,i));
+        check(check(:,i),:)=false;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+answer2=regexprep(join([check_temp{:}],<span class="string">','</span>),<span class="string">' '</span>,<span class="string">''</span>);
+fprintf(<span class="string">'Answer to part one= %d\nAnswer to part two= '</span>,answer(1))
+fprintf([answer2{1} <span class="string">'\n'</span>]);
+</pre><pre class="codeoutput">Answer to part one= 2659
+Answer to part two= rcqb,cltx,nrl,qjvvcvz,tsqpn,xhnk,tfqsb,zqzmzl
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear
+input=fileread('input.txt');
+input=splitlines(input);
+algs=regexp(input,'(?<=contains )[a-z]+|(?<=, )[a-z]+','match');
+ing=regexp(input,'\<(?!contains\>)[a-z]+ ','match');
+all_ing=unique([ing{:}]);
+all_algs=unique([algs{:}]);
+
+al.algs=all_algs;
+al.pos=cell(size(al.algs));
+
+for i=1:length(ing)
+    for j=1:length(algs{i})
+        ind=ismember(al.algs,algs{i}{j});
+        if isempty(al.pos{ind})
+            al.pos(ind)=ing(i);
+        else
+            al.pos{ind}=al.pos{ind}(ismember(al.pos{ind},ing{i}));
+        end
+    end
+end
+
+wrong=all_ing(~ismember(all_ing,unique([al.pos{:}])));
+answer=sum(ismember([ing{:}],wrong));
+
+for i=1:length(ing)
+    ing{i}=ing{i}(~cellfun(@isempty,regexprep(ing{i},wrong,'')));
+end
+
+part2.ing=unique([ing{:}]);
+part2.count=cell(1,8);
+part2.count(:)={zeros(1,8)};
+
+for i=1:length(ing)
+    for j=1:length(algs{i})
+        ind=ismember(al.algs,algs{i}{j});
+        for k=find(ismember(part2.ing,ing{i}))
+           part2.count{k}(ind)= part2.count{k}(ind)+1;
+        end
+    end
+end
+
+total=zeros(1,length(al.algs));
+for i=1:length(al.algs)
+    total(i)=sum(ismember([algs{:}],all_algs{i}));
+end
+check=false(length(al.algs));
+for i=1:length(al.algs)
+    check(i,:)=part2.count{i}==total;
+end
+
+check_temp=cell(length(al.algs),1);
+i=0;
+while sum(check,'all')>0
+    i=mod(i,8)+1;
+    if sum(check(:,i))==1
+        check_temp{i}=part2.ing(check(:,i));
+        check(check(:,i),:)=false;        
+    end
+end
+answer2=regexprep(join([check_temp{:}],','),' ','');
+fprintf('Answer to part one= %d\nAnswer to part two= ',answer(1))
+fprintf([answer2{1} '\n']);
+
+##### SOURCE END #####
+--></body></html>

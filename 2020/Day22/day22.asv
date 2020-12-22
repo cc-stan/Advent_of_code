@@ -1,0 +1,84 @@
+clear
+input=fileread('test.txt');
+players=regexp(input,'\r\n\r\n','split');
+player1=splitlines(players{1});
+player2=splitlines(players{2});
+player1=str2double(player1(2:end));
+player2=str2double(player2(2:end));
+deck_sz=length(player1)+length(player2);
+x=1:deck_sz;
+[~,winner]=combat(player1,player2);
+answer=sum(flip(winner).*x');
+[winner_part2,deck_part2]=recur_combat(player1,player2);
+
+
+function [winner,deck]=recur_combat(deck1,deck2)
+deck_sz=length(deck1)+length(deck2);
+deck_temp1=[];
+deck_temp2=[];
+while ~isempty(deck1)&&~isempty(deck2)
+    deck1_diff=deck_sz-length(deck1);
+    deck2_diff=deck_sz-length(deck2);
+    deck1_pad=[deck1',zeros(1,deck1_diff)];
+    deck2_pad=[deck2',zeros(1,deck2_diff)];
+    deck_temp1(end+1,:)=deck1_pad;
+    deck_temp2(end+1,:)=deck2_pad;
+    if sum(ismember(deck_temp1,deck1_pad,'rows'))>1 || sum(ismember(deck_temp2,deck2_pad,'rows'))>1
+        winner=1;
+        deck=deck1;
+        return
+    elseif deck1(1)>length(deck1)-1 || deck2(1)>length(deck2)-1
+        if deck1(1)>deck2(1)
+            deck1(end+1:end+2)=[deck1(1);deck2(1)];
+            deck1(1)=[];
+            deck2(1)=[];
+        else
+            deck2(end+1:end+2)=[deck2(1);deck1(1)];
+            deck1(1)=[];
+            deck2(1)=[];
+        end
+    else
+        subdeck1=deck1(2:deck1(1));
+        subdeck2=deck2(2:deck2(1));
+        winner=recur_combat(subdeck1,subdeck2);
+        switch winner
+            case 1
+                deck1(end+1:end+2)=[deck1(1);deck2(1)];
+                deck1(1)=[];
+                deck2(1)=[];
+            case 2
+                deck2(end+1:end+2)=[deck2(1);deck1(1)];
+                deck1(1)=[];
+                deck2(1)=[];
+        end
+    end
+end
+if isempty(deck1)
+    winner=2;
+    deck=deck2;
+else
+    winner=1;
+    deck=deck1;
+end
+end
+
+function [winner,deck]=combat(deck1,deck2)
+while ~isempty(deck1)&&~isempty(deck2)
+    if deck1(1)>deck2(1)
+        deck1(end+1:end+2)=[deck1(1);deck2(1)];
+        deck1(1)=[];
+        deck2(1)=[];
+    else
+        deck2(end+1:end+2)=[deck2(1);deck1(1)];
+        deck1(1)=[];
+        deck2(1)=[];
+    end
+end
+if isempty(deck1)
+    winner=2;
+    deck=deck2;
+else
+    winner=1;
+    deck=deck1;
+end
+end

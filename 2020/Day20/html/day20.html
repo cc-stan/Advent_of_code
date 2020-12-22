@@ -1,0 +1,466 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>day20</title><meta name="generator" content="MATLAB 9.9"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-12-22"><meta name="DC.source" content="day20.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clear
+input=fileread(<span class="string">'input.txt'</span>);
+ids=str2double(regexp(input,<span class="string">'\d+'</span>,<span class="string">'match'</span>));
+tiles_str=regexprep(input,{<span class="string">'[ Tile0-9:]|\r|\n'</span>,<span class="string">'[.]'</span>,<span class="string">'#'</span>},{<span class="string">''</span>,char(0),char(1)});
+sz=sqrt(length(tiles_str)/length(ids));
+
+temp=zeros(sz);
+
+tiles=cell(1,length(ids));
+j=0;
+k=0;
+<span class="keyword">for</span> i=1:length(tiles_str)
+    j=j+1;
+
+    temp(j)=tiles_str(i);
+    <span class="keyword">if</span> j==sz^2
+        j=0;
+        k=k+1;
+        tiles(k)={temp};
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+match=zeros(1,length(ids));
+edges=cell(528,1);
+id_match=zeros(528,2);
+k=0;
+<span class="keyword">for</span> i=1:length(ids)
+    <span class="keyword">for</span> j=1:length(ids)
+        match_temp=check_match(tiles{i},tiles{j});
+        <span class="keyword">if</span> match_temp&gt;0 &amp;&amp; i~=j
+            k=k+1;
+            [~,edges{k}]=check_match(tiles{i},tiles{j});
+            match(i)=match(i)+match_temp;
+            id_match(k,:)=[i,j];
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+answer=prod(ids(match==2));
+corner_ind=1:length(ids);
+corner_ind=corner_ind(match==2);
+
+grid_sz=sqrt(length(ids));
+puzzle=cell(grid_sz);
+
+x=grid_sz;
+y=1;
+id=9;
+<span class="comment">%id=2;</span>
+puzzle{y,x}=tiles{id};
+puz_id=zeros(grid_sz);
+check_id=true(1,length(ids));
+puz_id(y,x)=id;
+<span class="keyword">for</span> x=flip(1:grid_sz)
+    <span class="keyword">for</span> y=1:grid_sz
+        id=puz_id(y,x);
+        match_temp=id_match(id_match(:,1)==id,2);
+        <span class="keyword">for</span> i=1:length(match_temp)
+            c=match_temp(i);
+            <span class="keyword">if</span> check_id(c)
+                k=0;
+                <span class="keyword">while</span> k&lt;4
+                [~,edge]=check_match(tiles{id},tiles{c});
+                    <span class="keyword">switch</span> num2str([edge(1,:),edge(4,:)])
+                        <span class="keyword">case</span> <span class="string">"1  0  0  0  0  0  0  0"</span>
+                            tiles{c}=flip(tiles{c},2);
+                            puzzle{y,x-1}=flip(tiles{c},2);
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  1  0  0  0  0  0  0"</span>
+                            puzzle{y,x-1}=tiles{c};
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  1  0  0  0  0  0"</span>
+                            tiles{c}=rot90(tiles{c},3);
+                            puzzle{y,x-1}=tiles{c};
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  0  1  0  0  0  0"</span>
+                            tiles{c}=flip(rot90(tiles{c}));
+                            puzzle{y,x-1}=tiles{c};
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  0  0  1  0  0  0"</span>
+                            tiles{c}=rot90(flip(tiles{c}),3);
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  0  0  0  1  0  0"</span>
+                            tiles{c}=rot90(tiles{c});
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  0  0  0  0  1  0"</span>
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  0  0  0  0  0  1"</span>
+                            tiles{c}=flip(tiles{c});
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        <span class="keyword">case</span> <span class="string">"0  0  0  0  0  0  0  0"</span>
+                                <span class="keyword">if</span> k&lt;1
+                                k=k+1;
+                                tiles{c}=flip(tiles{c});
+                                <span class="keyword">elseif</span> k&lt;2
+                                k=k+1;
+                                tiles{c}=flip(tiles{c},2);
+                                <span class="keyword">else</span>
+                                k=k+1;
+                                tiles{c}=flip(tiles{c});
+                                <span class="keyword">end</span>
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+puzzle_copy=puzzle;
+<span class="keyword">for</span> i=1:grid_sz
+    <span class="keyword">for</span> j=1:grid_sz
+        puzzle_copy{i,j}(1,:)=2;
+        puzzle_copy{i,j}(end,:)=2;
+        puzzle_copy{i,j}(:,1)=2;
+        puzzle_copy{i,j}(:,end)=2;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+puzzle_full=cell2mat(puzzle_copy);
+<span class="keyword">for</span> i=1:grid_sz
+    <span class="keyword">for</span> j=1:grid_sz
+        puzzle{i,j}=tiles{puz_id(i,j)};
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:grid_sz
+    <span class="keyword">for</span> j=1:grid_sz
+        puzzle{i,j}=puzzle{i,j}(2:end-1,2:end-1);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+puzzle=cell2mat(puzzle);
+
+monster=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;<span class="keyword">...</span>
+        1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1;<span class="keyword">...</span>
+        0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0];
+
+<span class="comment">%     [~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,1,~;...</span>
+<span class="comment">%         1,~,~,~,~,1,1,~,~,~,~,1,1,~,~,~,~,1,1,1;...</span>
+<span class="comment">%         ~,1,~,~,1,~,~,1,~,~,1,~,~,1,~,~,1,~,~,~];</span>
+sum_mon=sum(monster,<span class="string">'all'</span>);
+puzzle=flip(rot90(puzzle,3),2);
+<span class="comment">%puzzle=flip(flip(puzzle),2);</span>
+monster=flip(monster,2);
+
+figure(1)
+imagesc(flip(puzzle),[0,2]);
+hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:length(puzzle)
+   plot([.5,length(puzzle)+.5],[i-.5,i-.5],<span class="string">'k-'</span>);
+   plot([i-.5,i-.5],[.5,length(puzzle)+.5],<span class="string">'k-'</span>);
+<span class="keyword">end</span>
+axis <span class="string">equal</span>;
+
+monster_conv=conv2(puzzle,monster);
+monsters_total=sum(monster_conv==15,<span class="string">'all'</span>);
+
+[monx,mony]=find(monster==1);
+[xm,ym]=find(monster_conv==15);
+
+<span class="keyword">for</span> i=1:length(xm)
+    <span class="keyword">for</span> j=1:length(monx)
+        puzzle(xm(i)-monx(j)+1,ym(i)-mony(j)+1)=2;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure(2)
+imagesc(flip(puzzle),[0,2]);
+hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:length(puzzle)
+   plot([.5,length(puzzle)+.5],[i-.5,i-.5],<span class="string">'k-'</span>);
+   plot([i-.5,i-.5],[.5,length(puzzle)+.5],<span class="string">'k-'</span>);
+<span class="keyword">end</span>
+axis <span class="string">equal</span>;
+
+answer(2)=sum(puzzle==1,<span class="string">'all'</span>);
+fprintf(<span class="string">'Answer to part one= %d\nAnswer to part two= %d\n'</span>,answer(1),answer(2));
+</pre><pre class="codeoutput">Answer to part one= 7901522557967
+Answer to part two= 2476
+</pre><img vspace="5" hspace="5" src="day20_01.png" alt=""> <img vspace="5" hspace="5" src="day20_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear
+input=fileread('input.txt');
+ids=str2double(regexp(input,'\d+','match'));
+tiles_str=regexprep(input,{'[ Tile0-9:]|\r|\n','[.]','#'},{'',char(0),char(1)});
+sz=sqrt(length(tiles_str)/length(ids));
+
+temp=zeros(sz);
+
+tiles=cell(1,length(ids));
+j=0;
+k=0;
+for i=1:length(tiles_str)
+    j=j+1;
+    
+    temp(j)=tiles_str(i);
+    if j==sz^2
+        j=0;
+        k=k+1;
+        tiles(k)={temp};
+    end
+end
+
+match=zeros(1,length(ids));
+edges=cell(528,1);
+id_match=zeros(528,2);
+k=0;
+for i=1:length(ids)
+    for j=1:length(ids)
+        match_temp=check_match(tiles{i},tiles{j});
+        if match_temp>0 && i~=j
+            k=k+1;
+            [~,edges{k}]=check_match(tiles{i},tiles{j});
+            match(i)=match(i)+match_temp;
+            id_match(k,:)=[i,j];
+        end
+    end
+end
+answer=prod(ids(match==2));
+corner_ind=1:length(ids);
+corner_ind=corner_ind(match==2);
+
+grid_sz=sqrt(length(ids));
+puzzle=cell(grid_sz);
+
+x=grid_sz;
+y=1;
+id=9;
+%id=2;
+puzzle{y,x}=tiles{id};
+puz_id=zeros(grid_sz);
+check_id=true(1,length(ids));
+puz_id(y,x)=id;
+for x=flip(1:grid_sz)
+    for y=1:grid_sz
+        id=puz_id(y,x);
+        match_temp=id_match(id_match(:,1)==id,2);       
+        for i=1:length(match_temp)
+            c=match_temp(i);
+            if check_id(c)
+                k=0;
+                while k<4
+                [~,edge]=check_match(tiles{id},tiles{c});
+                    switch num2str([edge(1,:),edge(4,:)])
+                        case "1  0  0  0  0  0  0  0"
+                            tiles{c}=flip(tiles{c},2);
+                            puzzle{y,x-1}=flip(tiles{c},2);
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  1  0  0  0  0  0  0"
+                            puzzle{y,x-1}=tiles{c};
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  1  0  0  0  0  0"
+                            tiles{c}=rot90(tiles{c},3);
+                            puzzle{y,x-1}=tiles{c};
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  0  1  0  0  0  0"
+                            tiles{c}=flip(rot90(tiles{c}));
+                            puzzle{y,x-1}=tiles{c};
+                            puz_id(y,x-1)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  0  0  1  0  0  0"
+                            tiles{c}=rot90(flip(tiles{c}),3);
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  0  0  0  1  0  0"
+                            tiles{c}=rot90(tiles{c});
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  0  0  0  0  1  0"
+                            puzzle{y+1,x}=tiles{c};
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  0  0  0  0  0  1"
+                            tiles{c}=flip(tiles{c});
+                            puzzle{y+1,x}=tiles{c};    
+                            puz_id(y+1,x)=c;
+                            k=4;
+                            check_id(c)=false;
+                        case "0  0  0  0  0  0  0  0"
+                                if k<1
+                                k=k+1;
+                                tiles{c}=flip(tiles{c});
+                                elseif k<2
+                                k=k+1;
+                                tiles{c}=flip(tiles{c},2);
+                                else
+                                k=k+1;
+                                tiles{c}=flip(tiles{c});
+                                end
+                    end
+                end
+            end
+        end
+    end
+end
+
+puzzle_copy=puzzle;
+for i=1:grid_sz
+    for j=1:grid_sz
+        puzzle_copy{i,j}(1,:)=2;
+        puzzle_copy{i,j}(end,:)=2;
+        puzzle_copy{i,j}(:,1)=2;
+        puzzle_copy{i,j}(:,end)=2;        
+    end
+end
+puzzle_full=cell2mat(puzzle_copy);
+for i=1:grid_sz
+    for j=1:grid_sz
+        puzzle{i,j}=tiles{puz_id(i,j)};
+    end
+end
+
+for i=1:grid_sz
+    for j=1:grid_sz
+        puzzle{i,j}=puzzle{i,j}(2:end-1,2:end-1);
+    end
+end
+puzzle=cell2mat(puzzle);
+
+monster=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;...
+        1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1;...
+        0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0];
+    
+%     [~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,~,1,~;...
+%         1,~,~,~,~,1,1,~,~,~,~,1,1,~,~,~,~,1,1,1;...
+%         ~,1,~,~,1,~,~,1,~,~,1,~,~,1,~,~,1,~,~,~];
+sum_mon=sum(monster,'all');
+puzzle=flip(rot90(puzzle,3),2);
+%puzzle=flip(flip(puzzle),2);
+monster=flip(monster,2);
+
+figure(1)
+imagesc(flip(puzzle),[0,2]);
+hold on; 
+for i=1:length(puzzle)
+   plot([.5,length(puzzle)+.5],[i-.5,i-.5],'k-');
+   plot([i-.5,i-.5],[.5,length(puzzle)+.5],'k-');
+end
+axis equal;
+
+monster_conv=conv2(puzzle,monster);
+monsters_total=sum(monster_conv==15,'all');
+
+[monx,mony]=find(monster==1);
+[xm,ym]=find(monster_conv==15);
+
+for i=1:length(xm)
+    for j=1:length(monx)
+        puzzle(xm(i)-monx(j)+1,ym(i)-mony(j)+1)=2;
+    end
+end
+
+figure(2)
+imagesc(flip(puzzle),[0,2]);
+hold on; 
+for i=1:length(puzzle)
+   plot([.5,length(puzzle)+.5],[i-.5,i-.5],'k-');
+   plot([i-.5,i-.5],[.5,length(puzzle)+.5],'k-');
+end
+axis equal;
+
+answer(2)=sum(puzzle==1,'all');
+fprintf('Answer to part one= %d\nAnswer to part two= %d\n',answer(1),answer(2));
+
+
+
+##### SOURCE END #####
+--></body></html>
